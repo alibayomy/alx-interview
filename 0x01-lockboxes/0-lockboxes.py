@@ -16,7 +16,6 @@ def canUnlockAll(boxes):
         if boxes_map[looping_index] == 1 or looping_index in box:
             for key in box:
                 boxes_map[key] = 1
-    print(boxes_map)
     for items in boxes_map:
         if items == 0:
             return False
