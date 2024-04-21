@@ -14,7 +14,7 @@ def canUnlockAll(boxes):
 
     for index,box  in enumerate(boxes[1:]):
         looping_index =  index  + 1 
-        if boxes_map[looping_index] == 1 or looping_index in box:
+        if boxes_map[looping_index] == 1:
             for key in box:
                 if key < len(boxes):
                     boxes_map[key] = 1
