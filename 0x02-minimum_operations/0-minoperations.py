@@ -10,8 +10,10 @@ def minOperations(n):
         return 0
     if n == 3:
         return 3
-    if n == 2:
+    if n in[ 1, 2]:
         return 2
+    if n == 5:
+        return 5
     if n % 3 == 0:
         total_operations = n // 3
         operations = 3 + 2
