@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# #!/usr/bin/python3
 """ Minimum Operations """
 
 
@@ -22,4 +22,11 @@ def minOperations(n):
         operations = 2 + 2
         for _ in range(0, total_operations - 2):
             operations += 1
+    elif n % 5 == 0:
+        total_operations = n // 5
+        operations = 5 + 2
+        for _ in range(0, total_operations - 2):
+            operations += 1
+    else:
+        return n
     return operations
