@@ -1,50 +1,50 @@
 #!/usr/bin/python3
-""" a script that reads stdin line by line and computes metrics"""
+"""
+log parsing
+"""
+
 import sys
 import re
 
 
-def main():
-    """Entery point"""
+def output(log: dict) -> None:
+    """
+    helper function to display stats
+    """
+    print("File size: {}".format(log["file_size"]))
+    for code in sorted(log["code_frequency"]):
+        if log["code_frequency"][code]:
+            print("{}: {}".format(code, log["code_frequency"][code]))
 
-    ip_regex = r'^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$'
-    counter = 0
-    total_size = 0
-    status_code = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0,
-                    404: 0, 405: 0, 500: 0}
+
+if __name__ == "__main__":
+    regex = re.compile(
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] "GET /projects/260 HTTP/1.1" (.{3}) (\d+)')  # nopep8
+
+    line_count = 0
+    log = {}
+    log["file_size"] = 0
+    log["code_frequency"] = {
+        str(code): 0 for code in [
+            200, 301, 400, 401, 403, 404, 405, 500]}
+
     try:
         for line in sys.stdin:
-            if counter == 10:
-                counter = 0
-                print(f"File size: {total_size}")
-                for key, value in status_code.items():
-                    if value > 0:
-                        print(f"{key}: {value}")
-                data = line.split()
-                try:
-                    ip = data[0]
-                    status = data[-2]
-                    file_size = data[-1]
-                    counter += 1
-                except ValueError as e:
-                    raise e
+            line = line.strip()
+            match = regex.fullmatch(line)
+            if (match):
+                line_count += 1
+                code = match.group(1)
+                file_size = int(match.group(2))
 
-                try:
-                    file_size = int(file_size)
-                    total_size = total_size + file_size
-                except ValueError as e:
-                    raise e
+                # File size
+                log["file_size"] += file_size
 
-                try:
-                    file_status_code = int(status)
-                    if (file_status_code in status_code.keys()):
-                        status_code[file_status_code] = status_code[file_status_code] + 1
-                except ValueError as e:
-                    raise e
-            
-    except KeyboardInterrupt:
-        print(f"File size: {total_size}")
-        for key,value in status_code.items():
-            if value > 0:
-                print(f"{key}: {value}")
-main()
+                # status code
+                if (code.isdecimal()):
+                    log["code_frequency"][code] += 1
+
+                if (line_count % 10 == 0):
+                    output(log)
+    finally:
+        output(log)
