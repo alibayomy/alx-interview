@@ -6,7 +6,6 @@ def rotate_2d_matrix(matrix):
     for row in range(len(matrix)):
         rotatedRow= []
         for column in range(len(matrix)-1 , -1, -1):
-            print(matrix[column][row])
             rotatedRow.append(matrix[column][row])
         rotated_matrix.append(rotatedRow)
 
